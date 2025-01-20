@@ -45,7 +45,7 @@ def get_destinations():
     return jsonify([destination.to_dict() for destination in destinations])
 
 # get specific destination
-@app.route("/destinations/<str:destination_id>", methods=["GET"])
+@app.route("/destinations/<destination_id>", methods=["GET"])
 def get_destination(destination_id):
     destination = Destination.query.get(destination_id)
     if destination:
@@ -67,7 +67,7 @@ def add_destination():
     return jsonify(new_destination.to_dict())
 
 # update desination
-@app.route("/destinations/<str:destination_id>", methods=["PUT"])
+@app.route("/destinations/<destination_id>", methods=["PUT"])
 def update_destination(destination_id):
     data = request.get_json()
     destination = Destination.query.get(destination_id)
@@ -82,7 +82,7 @@ def update_destination(destination_id):
     return jsonify({ "error": "Desination not found" }), 404
 
 # Delete a destination
-@app.route("/destinations/<str:destination_id>", methods=["DELETE"])
+@app.route("/destinations/<destination_id>", methods=["DELETE"])
 def delete_destination(destination_id):
     destination = Destination.query.get(destination_id)
     if destination:
