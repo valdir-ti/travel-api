@@ -1,4 +1,5 @@
 import os
+import uuid
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 
@@ -11,7 +12,7 @@ db = SQLAlchemy(app)
 
 # Class Destination
 class Destination(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     destination = db.Column(db.String, nullable=False)
     country = db.Column(db.String, nullable=False)
     rating = db.Column(db.Float, nullable=False)
@@ -23,8 +24,13 @@ class Destination(db.Model):
             "country": self.country,
             "rating": self.rating,
         }
+        
+    @staticmethod
+    def generate_uuid():
+        return str(uuid.uuid4())
 
 with app.app_context():
+    db.drop_all()
     db.create_all()
 
 #default route
@@ -39,7 +45,7 @@ def get_destinations():
     return jsonify([destination.to_dict() for destination in destinations])
 
 # get specific destination
-@app.route("/destinations/<int:destination_id>", methods=["GET"])
+@app.route("/destinations/<str:destination_id>", methods=["GET"])
 def get_destination(destination_id):
     destination = Destination.query.get(destination_id)
     if destination:
@@ -50,14 +56,18 @@ def get_destination(destination_id):
 # add destination
 @app.route("/destinations", methods=["POST"])
 def add_destination():
-    data = request.get_json()
-    new_destination = Destination(destination=data["destination"], country=data["country"], rating=data["rating"])
+    data = request.get_json()    
+    new_destination = Destination(
+        destination=data["destination"], 
+        country=data["country"], 
+        rating=data["rating"]
+    )
     db.session.add(new_destination)
     db.session.commit()
     return jsonify(new_destination.to_dict())
 
 # update desination
-@app.route("/destinations/<int:destination_id>", methods=["PUT"])
+@app.route("/destinations/<str:destination_id>", methods=["PUT"])
 def update_destination(destination_id):
     data = request.get_json()
     destination = Destination.query.get(destination_id)
@@ -72,7 +82,7 @@ def update_destination(destination_id):
     return jsonify({ "error": "Desination not found" }), 404
 
 # Delete a destination
-@app.route("/destinations/<int:destination_id>", methods=["DELETE"])
+@app.route("/destinations/<str:destination_id>", methods=["DELETE"])
 def delete_destination(destination_id):
     destination = Destination.query.get(destination_id)
     if destination:
