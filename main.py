@@ -1,6 +1,7 @@
 import os
 from app import create_app
 from flask import jsonify
+from dotenv import load_dotenv
 
 app = create_app()
 
@@ -10,6 +11,8 @@ def home():
     return jsonify({ "message": "Welcome to travel API" })
 
 if __name__ == "__main__":
+    
+    load_dotenv()
     
     print("Available routes:")
     for rule in app.url_map.iter_rules():

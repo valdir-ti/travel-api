@@ -1,10 +1,15 @@
+import os
 import sentry_sdk
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask
 
+enviroment=os.getenv('ENVIROMENT'),
+sentry_dns=os.getenv('SENTRY_DSN')
+
 sentry_sdk.init(
-    dsn="https://2e740bef9a83022b54bf177f37ba0e23@o339642.ingest.us.sentry.io/4508683419975680",
+    dsn=sentry_dns,
     traces_sample_rate=1.0,
+    environment=enviroment,
     _experiments={
         "continuous_profiling_auto_start": True,
     },
