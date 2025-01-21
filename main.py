@@ -1,7 +1,16 @@
 import os
 import uuid
+import sentry_sdk
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
+
+sentry_sdk.init(
+    dsn="https://2e740bef9a83022b54bf177f37ba0e23@o339642.ingest.us.sentry.io/4508683419975680",
+    traces_sample_rate=1.0,
+    _experiments={
+        "continuous_profiling_auto_start": True,
+    },
+)
 
 app = Flask(__name__)
 
